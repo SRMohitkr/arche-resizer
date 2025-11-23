@@ -1,0 +1,25 @@
+:root {
+    /* Vibrant Gradient Theme */
+    --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ff758c 100%);
+
+    /* Colors */
+    --text-color: #333333;
+    --glass-bg: rgba(255, 255, 255, 0.9);
+    /* More opaque for readability */
+    --glass-border: rgba(255, 255, 255, 0.5);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.25);
+
+    --primary-color: #764ba2;
+    /* Purple to match theme */
+    --primary-hover: #5a387e;
+    --secondary-color: #6c757d;
+    --accent-color: #ff758c;
+
+    /* Neumorphism (used for cards inside modal) */
+    --neu-bg: #f0f2f5;
+    --neu-shadow-light: #ffffff;
+    --neu-shadow-dark: #d1d9e6;
+
+    /* Font */
+    --font-family: 'Inter', sans-serif;
+}

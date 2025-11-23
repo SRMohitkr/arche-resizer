@@ -1,0 +1,79 @@
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+    tailwind.config = {
+        darkMode: 'class',
+        theme: {
+            extend: {
+                colors: {
+                    primary: '#4F46E5', // Indigo 600
+                    secondary: '#EC4899', // Pink 500
+                    accent: '#8B5CF6', // Violet 500
+                    dark: '#0F172A', // Slate 900
+                    light: '#F8FAFC', // Slate 50
+                },
+                fontFamily: {
+                    sans: ['Inter', 'sans-serif'],
+                },
+                animation: {
+                    'fade-in': 'fadeIn 0.5s ease-out',
+                    'slide-down': 'slideDown 0.3s ease-out',
+                    'float': 'float 3s ease-in-out infinite',
+                },
+                keyframes: {
+                    fadeIn: {
+                        '0%': { opacity: '0' },
+                        '100%': { opacity: '1' },
+                    },
+                    slideDown: {
+                        '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                        '100%': { transform: 'translateY(0)', opacity: '1' },
+                    },
+                    float: {
+                        '0%, 100%': { transform: 'translateY(0)' },
+                        '50%': { transform: 'translateY(-10px)' },
+                    }
+                }
+            }
+        }
+    }
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* Glassmorphism Utilities */
+    .glass {
+        background: rgba(255, 255, 255, 0.7);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .dark .glass {
+        background: rgba(15, 23, 42, 0.7);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+    }
+
+    .dark .glass-card {
+        background: rgba(30, 41, 59, 0.8);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+    }
+
+    /* Gradient Text */
+    .text-gradient {
+        background: linear-gradient(135deg, #4F46E5, #EC4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+</style>

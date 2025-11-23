@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Survey - Universal Document Resizer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#EC4899', // Pink 500
+                        accent: '#8B5CF6', // Violet 500
+                        dark: '#0F172A', // Slate 900
+                        light: '#F8FAFC', // Slate 50
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Custom Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .bg-gradient-main {
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+        }
+
+        .dark .bg-gradient-main {
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gradient-main text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 glass transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer"
+                    onclick="window.location.href='index.html'">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold shadow-lg">
+                        R
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Universal <span
+                            class="text-primary dark:text-indigo-400">Resizer</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html"
+                        class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 transition-colors">Home</a>
+                    <a href="about.html"
+                        class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 transition-colors">About
+                        Us</a>
+                    <a href="mailto:sr.mohitkr@gmail.com"
+                        class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 transition-colors">Contact</a>
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle"
+                        class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <span id="theme-icon-light" class="hidden">☀️</span>
+                        <span id="theme-icon-dark">🌙</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn"
+                        class="text-slate-600 dark:text-slate-300 hover:text-primary focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden md:hidden glass border-t border-slate-200 dark:border-slate-700 absolute w-full animate-slide-down">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400">Home</a>
+                <a href="about.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400">About
+                    Us</a>
+                <a href="mailto:sr.mohitkr@gmail.com"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
+        <div class="max-w-xl w-full animate-fade-in">
+            <div class="glass-card rounded-2xl p-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold mb-2">Almost There! 🚀</h2>
+                    <p class="text-slate-600 dark:text-slate-400">Please answer 3 quick questions to unlock your
+                        download.</p>
+                </div>
+
+                <form id="survey-form" class="space-y-6">
+                    <!-- Question 1 -->
+                    <div>
+                        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">1. Are you
+                            facing trouble in to sell the scrap?</label>
+                        <div class="space-y-2">
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="trouble_selling" value="Yes" required
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">Yes</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="trouble_selling" value="No"
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">No</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div>
+                        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">2. 💳 How do
+                            you prefer to receive your scrap payment when selling?</label>
+                        <div class="space-y-2">
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="payment_preference" value="UPI" required
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">📱 UPI</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="payment_preference" value="Cash"
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">💵 Cash</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="payment_preference" value="Bank Transfer"
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">🏦 Bank Transfer</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 3 -->
+                    <div>
+                        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">3. ⚡ If an
+                            online platform in your area offers fixed scrap prices, fast door-pickup and instant
+                            payment, would you be interested in using it?</label>
+                        <div class="space-y-2">
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="platform_interest" value="Yes, definitely" required
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">✔ Yes, definitely</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="platform_interest" value="Maybe, I want to know more"
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">🤝 Maybe, I want to know more</span>
+                            </label>
+                            <label
+                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
+                                <input type="radio" name="platform_interest" value="Not sure"
+                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
+                                <span class="ml-3 text-sm">❌ Not sure</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Question 4 -->
+                    <div>
+                        <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">4. 📍 To check
+                            availability & pricing for your area, please enter your location:</label>
+                        <input type="text" name="location" placeholder="Enter City + Locality" required
+                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all">
+                    </div>
+
+                    <button type="submit" id="submit-btn"
+                        class="w-full bg-gradient-to-r from-primary to-secondary hover:from-indigo-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-500/30 transform transition-all hover:-translate-y-1">
+                        Submit & Start Download
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass border-t border-slate-200 dark:border-slate-700 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-center text-sm text-slate-500">
+            &copy; 2025 Universal Resizer — All Rights Reserved
+        </div>
+    </footer>
+
+    <!-- Loader -->
+    <div id="loader"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center shadow-2xl">
+            <div
+                class="w-12 h-12 border-4 border-slate-200 dark:border-slate-600 border-t-primary rounded-full animate-spin mb-4">
+            </div>
+            <p class="text-slate-700 dark:text-slate-300 font-medium">Submitting Survey...</p>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/survey.js"></script>
+</body>
+
+</html>

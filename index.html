@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Document Resizer</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#4F46E5', // Indigo 600
+                        secondary: '#EC4899', // Pink 500
+                        accent: '#8B5CF6', // Violet 500
+                        dark: '#000000', // Pure Black
+                        light: '#F8FAFC', // Slate 50
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out',
+                        'slide-down': 'slideDown 0.3s ease-out',
+                        'float': 'float 3s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+    <style>
+        /* Custom Utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass {
+            background: rgba(15, 23, 42, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
+
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #4F46E5, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .bg-gradient-main {
+            background: linear-gradient(135deg, #EEF2FF 0%, #E0E7FF 100%);
+        }
+
+        .dark .bg-gradient-main {
+            background: linear-gradient(135deg, #000000 0%, #1e1b4b 50%, #0f172a 100%);
+        }
+    </style>
+</head>
+
+<body
+    class="bg-gradient-main text-slate-800 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300">
+
+    <!-- Navbar -->
+    <nav class="fixed top-0 w-full z-50 glass transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <!-- Logo -->
+                <div class="flex-shrink-0 flex items-center gap-2 cursor-pointer"
+                    onclick="window.location.href='index.html'">
+                    <div
+                        class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold shadow-lg">
+                        R
+                    </div>
+                    <span class="font-bold text-xl tracking-tight">Universal <span
+                            class="text-primary dark:text-indigo-400">Resizer</span></span>
+                </div>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="index.html" class="text-primary font-medium transition-colors">Home</a>
+                    <a href="#about"
+                        class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 transition-colors">About
+                        Us</a>
+                    <a href="mailto:sr.mohitkr@gmail.com"
+                        class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 transition-colors">Contact</a>
+
+                    <!-- Dark Mode Toggle -->
+                    <button id="theme-toggle"
+                        class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                        <span id="theme-icon-light" class="hidden">☀️</span>
+                        <span id="theme-icon-dark">🌙</span>
+                    </button>
+                </div>
+
+                <!-- Mobile Menu Button -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn"
+                        class="text-slate-600 dark:text-slate-300 hover:text-primary focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 6h16M4 12h16M4 18h16" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu"
+            class="hidden md:hidden glass border-t border-slate-200 dark:border-slate-700 absolute w-full animate-slide-down">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="index.html"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-primary bg-indigo-50 dark:bg-indigo-900/20">Home</a>
+                <a href="#about"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400">About
+                    Us</a>
+                <a href="mailto:sr.mohitkr@gmail.com"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow pt-24 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto w-full">
+
+        <!-- Hero Section -->
+        <div class="text-center mb-12 animate-fade-in">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">
+                Resize Documents <span class="text-gradient">Instantly</span>
+            </h1>
+            <p class="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+                Secure, client-side resizing for Images and PDFs. No uploads, no data loss.
+            </p>
+        </div>
+
+        <!-- Resizer Interface -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Left: Upload & Preview -->
+            <div class="lg:col-span-2 space-y-6">
+                <!-- Upload Zone -->
+                <div id="drop-zone"
+                    class="glass-card rounded-2xl p-8 text-center border-2 border-dashed border-indigo-300 dark:border-indigo-700 hover:border-primary dark:hover:border-indigo-500 transition-all cursor-pointer group relative overflow-hidden">
+                    <div
+                        class="absolute inset-0 bg-indigo-50 dark:bg-indigo-900/10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform duration-300">
+                            <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-semibold mb-2">Drop your file here</h3>
+                        <p class="text-slate-500 dark:text-slate-400 text-sm">Supports JPG, PNG, PDF</p>
+                        <input type="file" id="file-input" accept="image/jpeg, image/png, application/pdf"
+                            class="hidden">
+                    </div>
+                </div>
+
+                <!-- Preview Area -->
+                <div id="preview-container" class="hidden glass-card rounded-2xl p-4 animate-fade-in">
+                    <div
+                        class="flex justify-between items-center mb-4 border-b border-slate-200 dark:border-slate-700 pb-2">
+                        <h3 class="font-semibold">Preview</h3>
+                        <span id="file-info" class="text-sm text-slate-500"></span>
+                    </div>
+                    <div
+                        class="relative bg-slate-100 dark:bg-slate-900 rounded-lg overflow-hidden min-h-[300px] flex items-center justify-center">
+                        <canvas id="preview-canvas" class="max-w-full max-h-[500px] shadow-lg"></canvas>
+                    </div>
+                    <!-- PDF Controls -->
+                    <div id="pdf-controls" class="hidden flex justify-center items-center gap-4 mt-4">
+                        <button id="prev-page"
+                            class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 19l-7-7 7-7"></path>
+                            </svg>
+                        </button>
+                        <span id="page-num" class="text-sm font-medium">Page 1</span>
+                        <button id="next-page"
+                            class="p-2 rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7">
+                                </path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Settings -->
+            <div class="lg:col-span-1">
+                <div class="glass-card rounded-2xl p-6 sticky top-24">
+                    <h3 class="text-lg font-bold mb-6 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4">
+                            </path>
+                        </svg>
+                        Settings
+                    </h3>
+
+                    <div class="space-y-6">
+                        <!-- Presets -->
+                        <div>
+                            <label
+                                class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Preset</label>
+                            <select id="preset-select"
+                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all">
+                                <option value="custom">Custom Dimensions</option>
+                                <option value="passport">Govt. Passport (600x600)</option>
+                                <option value="college">College Admission (200x230)</option>
+                                <option value="signature">Signature (140x60)</option>
+                                <option value="a4">A4 PDF (3508x2480)</option>
+                            </select>
+                        </div>
+
+                        <!-- Dimensions -->
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Width</label>
+                                <div class="relative">
+                                    <input type="number" id="width-input"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg pl-4 pr-8 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all"
+                                        placeholder="0">
+                                    <span class="absolute right-3 top-2.5 text-slate-400 text-sm">px</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Height</label>
+                                <div class="relative">
+                                    <input type="number" id="height-input"
+                                        class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg pl-4 pr-8 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all"
+                                        placeholder="0">
+                                    <span class="absolute right-3 top-2.5 text-slate-400 text-sm">px</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="maintain-aspect" checked
+                                class="w-4 h-4 text-primary rounded border-slate-300 focus:ring-primary">
+                            <label for="maintain-aspect" class="text-sm text-slate-600 dark:text-slate-400">Maintain
+                                Aspect Ratio</label>
+                        </div>
+
+                        <!-- File Size Limit -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Max File
+                                Size</label>
+                            <select id="size-limit"
+                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all">
+                                <option value="0">No Limit</option>
+                                <option value="50">50 KB</option>
+                                <option value="200">200 KB</option>
+                                <option value="500">500 KB</option>
+                                <option value="1024">1 MB</option>
+                            </select>
+                        </div>
+
+                        <!-- Format -->
+                        <div>
+                            <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Output
+                                Format</label>
+                            <select id="format-select"
+                                class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all">
+                                <option value="image/jpeg" selected>JPG</option>
+                                <option value="image/png">PNG</option>
+                                <option value="application/pdf">PDF</option>
+                            </select>
+                        </div>
+
+                        <!-- Action Button -->
+                        <button id="download-btn" disabled
+                            class="w-full bg-gradient-to-r from-primary to-secondary hover:from-indigo-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-500/30 transform transition-all hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
+                            Process & Download
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- About Us Section -->
+        <section id="about" class="mt-16 animate-fade-in">
+            <div class="glass-card rounded-2xl p-8 md:p-12">
+                <div class="text-center mb-12">
+                    <div
+                        class="w-20 h-20 bg-gradient-to-br from-primary to-secondary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-lg animate-float">
+                        <svg class="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+                            </path>
+                        </svg>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        We make document formatting <br> <span class="text-gradient">easy for everyone</span>
+                    </h2>
+                    <p class="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+                        Universal Resizer was built with a simple mission: to help students, professionals, and everyone
+                        in
+                        between handle their document needs without complex software or privacy concerns. We believe in
+                        powerful
+                        tools that are accessible, secure, and free.
+                    </p>
+                </div>
+
+                <!-- Features Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <!-- Feature 1 -->
+                    <div
+                        class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 p-6 rounded-xl text-center hover:transform hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-12 h-12 bg-indigo-100 dark:bg-indigo-900/50 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">100% Secure</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">All processing happens in your browser.
+                            Your files never leave your device.</p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div
+                        class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 p-6 rounded-xl text-center hover:transform hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-12 h-12 bg-pink-100 dark:bg-pink-900/50 rounded-full flex items-center justify-center mx-auto mb-4 text-secondary">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Fast & Accurate</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Powered by advanced algorithms to ensure
+                            high quality output instantly.</p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div
+                        class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 p-6 rounded-xl text-center hover:transform hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-12 h-12 bg-violet-100 dark:bg-violet-900/50 rounded-full flex items-center justify-center mx-auto mb-4 text-accent">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Any Device</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">Works seamlessly on mobile, tablet, and
+                            desktop browsers.</p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div
+                        class="bg-white/40 dark:bg-slate-800/40 backdrop-blur-sm border border-white/20 dark:border-slate-700/30 p-6 rounded-xl text-center hover:transform hover:-translate-y-1 transition-all duration-300">
+                        <div
+                            class="w-12 h-12 bg-green-100 dark:bg-green-900/50 rounded-full flex items-center justify-center mx-auto mb-4 text-green-500">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-lg mb-2">Completely Free</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400">No hidden fees, no subscriptions. Just a
+                            useful tool for everyone.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass border-t border-slate-200 dark:border-slate-700 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="col-span-1 md:col-span-1">
+                    <div class="flex items-center gap-2 mb-4">
+                        <div
+                            class="w-8 h-8 bg-gradient-to-br from-primary to-secondary rounded-lg flex items-center justify-center text-white font-bold">
+                            R</div>
+                        <span class="font-bold text-lg">Universal Resizer</span>
+                    </div>
+                    <p class="text-sm text-slate-500 dark:text-slate-400">
+                        Professional document resizing tool. Secure, fast, and free.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+                        <li><a href="index.html" class="hover:text-primary transition-colors">Home</a></li>
+                        <li><a href="#about" class="hover:text-primary transition-colors">About Us</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4">Tools</h4>
+                    <ul class="space-y-2 text-sm text-slate-500 dark:text-slate-400">
+                        <li><a href="#" class="hover:text-primary transition-colors">Image Resizer</a></li>
+                        <li><a href="#" class="hover:text-primary transition-colors">PDF Compressor</a></li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="font-semibold mb-4">Connect</h4>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-slate-400 hover:text-pink-500 transition-colors"><svg class="w-5 h-5"
+                                fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                            </svg></a>
+                        <a href="https://www.youtube.com/channel/UCx_VTCP2Le5teE8uzjrcchg"
+                            class="text-slate-400 hover:text-red-500 transition-colors"><svg class="w-5 h-5"
+                                fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z" />
+                            </svg></a>
+                        <a href="mailto:sr.mohitkr@gmail.com"
+                            class="text-slate-400 hover:text-primary transition-colors"><svg class="w-5 h-5" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                </path>
+                            </svg></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-slate-200 dark:border-slate-700 mt-8 pt-8 text-center text-sm text-slate-500">
+                Made with love ❤️ by SR.Mohit Kumar
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loader -->
+    <div id="loader"
+        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] hidden opacity-0 transition-opacity duration-300">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center shadow-2xl">
+            <div
+                class="w-12 h-12 border-4 border-slate-200 dark:border-slate-600 border-t-primary rounded-full animate-spin mb-4">
+            </div>
+            <p class="text-slate-700 dark:text-slate-300 font-medium">Processing...</p>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
