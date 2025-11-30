@@ -159,7 +159,7 @@ async function triggerDownload() {
             URL.revokeObjectURL(url);
 
             // Cleanup
-            await storage.deleteFile('pending_download');
+            // await storage.deleteFile('pending_download'); // Deletion removed to retain file
 
             // Redirect after short delay
             setTimeout(() => {
