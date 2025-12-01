@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survey - Arche Resizer</title>
+    <title>Login - Arche Resizer</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -109,8 +109,7 @@
                         Us</a>
                     <a href="mailto:sr.mohitkr@gmail.com"
                         class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 transition-colors">Contact</a>
-                    <a href="login.html"
-                        class="text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400 transition-colors">Login</a>
+                    <a href="#" class="text-primary font-medium transition-colors">Login</a>
 
                     <!-- Dark Mode Toggle -->
                     <button id="theme-toggle"
@@ -144,111 +143,37 @@
                     Us</a>
                 <a href="mailto:sr.mohitkr@gmail.com"
                     class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400">Contact</a>
-                <a href="login.html"
-                    class="block px-3 py-2 rounded-md text-base font-medium text-slate-600 dark:text-slate-300 hover:text-primary dark:hover:text-indigo-400">Login</a>
+                <a href="#"
+                    class="block px-3 py-2 rounded-md text-base font-medium text-primary bg-indigo-50 dark:bg-indigo-900/20">Login</a>
             </div>
         </div>
     </nav>
 
     <!-- Main Content -->
     <main class="flex-grow pt-20 md:pt-24 pb-8 md:pb-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center">
-        <div class="max-w-xl w-full animate-fade-in">
+        <div class="max-w-md w-full animate-fade-in">
             <div class="glass-card rounded-2xl p-8">
                 <div class="text-center mb-8">
-                    <h2 class="text-3xl font-bold mb-2">Almost There! 🚀</h2>
-                    <p class="text-slate-600 dark:text-slate-400">Please answer 3 quick questions to unlock your
-                        download.</p>
+                    <h2 class="text-3xl font-bold mb-2">Welcome Back</h2>
+                    <p class="text-slate-600 dark:text-slate-400">Sign in to continue</p>
                 </div>
 
-                <form id="survey-form" class="space-y-6">
-                    <!-- Question 1 -->
+                <form id="login-form" class="space-y-6">
                     <div>
-                        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">1. Are you
-                            facing trouble in to sell the scrap?</label>
-                        <div class="space-y-2">
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="trouble_selling" value="Yes" required
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">Yes</span>
-                            </label>
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="trouble_selling" value="No"
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">No</span>
-                            </label>
-                        </div>
+                        <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Email</label>
+                        <input type="email" id="email" required
+                            class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all">
                     </div>
-
-                    <!-- Question 2 -->
                     <div>
-                        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">2. 💳 How do
-                            you prefer to receive your scrap payment when selling?</label>
-                        <div class="space-y-2">
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="payment_preference" value="UPI" required
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">📱 UPI</span>
-                            </label>
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="payment_preference" value="Cash"
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">💵 Cash</span>
-                            </label>
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="payment_preference" value="Bank Transfer"
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">🏦 Bank Transfer</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Question 3 -->
-                    <div>
-                        <label class="block text-sm font-medium mb-3 text-slate-700 dark:text-slate-300">3. ⚡ If an
-                            online platform in your area offers fixed scrap prices, fast door-pickup and instant
-                            payment, would you be interested in using it?</label>
-                        <div class="space-y-2">
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="platform_interest" value="Yes, definitely" required
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">✔ Yes, definitely</span>
-                            </label>
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="platform_interest" value="Maybe, I want to know more"
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">🤝 Maybe, I want to know more</span>
-                            </label>
-                            <label
-                                class="flex items-center p-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/50 cursor-pointer transition-colors">
-                                <input type="radio" name="platform_interest" value="Not sure"
-                                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300">
-                                <span class="ml-3 text-sm">❌ Not sure</span>
-                            </label>
-                        </div>
-                    </div>
-
-                    <!-- Question 4 -->
-                    <div>
-                        <label class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">4. 📍 To check
-                            availability & pricing for your area, please enter your location:</label>
-                        <input type="text" name="location" placeholder="Enter City + Locality" required
+                        <label
+                            class="block text-sm font-medium mb-2 text-slate-700 dark:text-slate-300">Password</label>
+                        <input type="password" id="password" required
                             class="w-full bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg px-4 py-2.5 focus:ring-2 focus:ring-primary outline-none transition-all">
                     </div>
 
-                    <button type="submit" id="submit-btn"
+                    <button type="submit" id="login-btn"
                         class="w-full bg-gradient-to-r from-primary to-secondary hover:from-indigo-600 hover:to-pink-600 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-indigo-500/30 transform transition-all hover:-translate-y-1">
-                        Submit & Start Download
-                    </button>
-                    <button type="button" id="skip-btn"
-                        class="w-full bg-transparent border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-medium py-3 px-6 rounded-xl hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors mt-4">
-                        Skip for now
+                        Sign In
                     </button>
                 </form>
             </div>
@@ -262,21 +187,8 @@
         </div>
     </footer>
 
-    <!-- Loader -->
-    <div id="loader"
-        class="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] hidden opacity-0 transition-opacity duration-300">
-        <div class="bg-white dark:bg-slate-800 rounded-2xl p-8 flex flex-col items-center shadow-2xl">
-            <div
-                class="w-12 h-12 border-4 border-slate-200 dark:border-slate-600 border-t-primary rounded-full animate-spin mb-4">
-            </div>
-            <p class="text-slate-700 dark:text-slate-300 font-medium">Submitting Survey...</p>
-        </div>
-    </div>
-
     <!-- Scripts -->
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/survey.js"></script>
+    <script src="js/login.js"></script>
 </body>
 
 </html>

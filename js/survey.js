@@ -1,13 +1,9 @@
-// EmailJS Configuration
-const EMAILJS_CONFIG = {
-    PUBLIC_KEY: 'YOUR_PUBLIC_KEY', // User needs to replace this
-    SERVICE_ID: 'YOUR_SERVICE_ID',
-    TEMPLATE_ID: 'YOUR_TEMPLATE_ID'
-};
+// EmailJS configuration removed; using Google Sheet integration
 
 // DOM Elements
 const surveyForm = document.getElementById('survey-form');
 const submitBtn = document.getElementById('submit-btn');
+const skipBtn = document.getElementById('skip-btn');
 const loader = document.getElementById('loader');
 const themeToggle = document.getElementById('theme-toggle');
 const iconLight = document.getElementById('theme-icon-light');
@@ -17,7 +13,7 @@ const mobileMenu = document.getElementById('mobile-menu');
 
 // Initialization
 document.addEventListener('DOMContentLoaded', () => {
-    emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+    // EmailJS initialization removed
     setupTheme();
     setupEventListeners();
     checkFileAvailability();
@@ -56,6 +52,9 @@ function updateThemeIcons(isDark) {
 
 function setupEventListeners() {
     surveyForm.addEventListener('submit', handleSurveySubmit);
+    if (skipBtn) {
+        skipBtn.addEventListener('click', handleSkip);
+    }
 }
 
 async function checkFileAvailability() {
@@ -81,49 +80,34 @@ async function handleSurveySubmit(e) {
     showLoader();
 
     const formData = new FormData(surveyForm);
-    const templateParams = {
-        trouble_selling: formData.get('trouble_selling'),
-        payment_preference: formData.get('payment_preference'),
-        platform_interest: formData.get('platform_interest'),
-        location: formData.get('location'),
-        to_email: 'sr.mohitkr@gmail.com'
+    const payload = {
+        "Are you facing trouble in to sell the scrap?": formData.get('trouble_selling'),
+        "How do you prefer to receive your scrap payment when selling?": formData.get('payment_preference'),
+        "If an online platform in your area offers fixed scrap prices, fast door-pickup and instant payment, would you be interested in using it?": formData.get('platform_interest'),
+        "To check availability & pricing for your area, please enter your location": formData.get('location')
     };
 
-    // Check if keys are configured
-    const isConfigured = EMAILJS_CONFIG.PUBLIC_KEY !== 'YOUR_PUBLIC_KEY';
-
     try {
-        if (isConfigured) {
-            // Send Email via EmailJS
-            await emailjs.send(
-                EMAILJS_CONFIG.SERVICE_ID,
-                EMAILJS_CONFIG.TEMPLATE_ID,
-                templateParams
-            );
-            console.log('Survey sent successfully');
-        } else {
-            throw new Error('EmailJS not configured');
-        }
+        await fetch('https://script.google.com/macros/s/AKfycbxqiJeIdhR9AnaxF1uOyf-6yNd7dxLUxMgohPgsqY5Ip-brUu0ylj90s3RemcbzR6XfLw/exec', {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        console.log('Survey data sent to Google Sheet');
     } catch (error) {
-        console.warn('EmailJS Failed or Not Configured:', error);
-
-        // Fallback: Open Mailto Link
-        const subject = encodeURIComponent('Universal Resizer Survey Response');
-        const body = encodeURIComponent(`
-Trouble Selling: ${templateParams.trouble_selling}
-Payment Preference: ${templateParams.payment_preference}
-Platform Interest: ${templateParams.platform_interest}
-Location: ${templateParams.location}
-        `);
-
-        // Open mail client in a new tab/window to avoid disrupting the flow
-        window.open(`mailto:sr.mohitkr@gmail.com?subject=${subject}&body=${body}`, '_blank');
-
-        // Short delay to allow the mail client to trigger
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        console.warn('Failed to send survey data:', error);
     } finally {
         await triggerDownload();
     }
+}
+
+async function handleSkip(e) {
+    e.preventDefault();
+    console.log('Survey skipped by user.');
+    await triggerDownload();
 }
 
 async function triggerDownload() {
