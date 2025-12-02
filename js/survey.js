@@ -79,24 +79,24 @@ async function handleSurveySubmit(e) {
 
     showLoader();
 
+    // Build payload with simple keys
     const formData = new FormData(surveyForm);
-    const payload = {
-        "Are you facing trouble in to sell the scrap?": formData.get('trouble_selling'),
-        "How do you prefer to receive your scrap payment when selling?": formData.get('payment_preference'),
-        "If an online platform in your area offers fixed scrap prices, fast door-pickup and instant payment, would you be interested in using it?": formData.get('platform_interest'),
-        "To check availability & pricing for your area, please enter your location": formData.get('location')
-    };
+    const payload = new URLSearchParams({
+        trouble_selling: formData.get('trouble_selling'),
+        payment_preference: formData.get('payment_preference'),
+        platform_interest: formData.get('platform_interest'),
+        location: formData.get('location')
+    });
 
     try {
-        await fetch('https://script.google.com/macros/s/AKfycbxqiJeIdhR9AnaxF1uOyf-6yNd7dxLUxMgohPgsqY5Ip-brUu0ylj90s3RemcbzR6XfLw/exec', {
+        await fetch('https://script.google.com/macros/s/AKfycbztZcuDt2ANt0AUtW4q3sju6l0HD1XcLLSTYwtuUguRXPZKQbApXiFzbrYwJDmJOrVrmA/exec', {
             method: 'POST',
             mode: 'no-cors',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/x-www-form-urlencoded'
             },
-            body: JSON.stringify(payload)
+            body: payload
         });
-        console.log('Survey data sent to Google Sheet');
     } catch (error) {
         console.warn('Failed to send survey data:', error);
     } finally {
